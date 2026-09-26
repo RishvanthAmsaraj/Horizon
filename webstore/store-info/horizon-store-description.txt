@@ -1,0 +1,27 @@
+Horizon Tab is a fast, private, and fully customizable new tab page for Chrome. No accounts, no ads, no tracking — just a clean dashboard that puts web search, AI chat, and product search one keystroke away, and stays out of your way the rest of the time.
+
+ONE SEARCH BOX, THREE MODES
+
+The search bar at the center of the page fans out into a drawer with three tabs — Web Search, AI Chat, and Shop — so one box handles everything. Switch modes with a click, the Tab key, or the arrow keys; the whole drawer is keyboard-navigable, and the active engine or provider is always shown right on the search bar before you hit Enter.
+
+SEARCH YOUR WAY
+
+- Eight search engines, each with real, verified search URLs — including dedicated News, Images, and Video results, so choosing a vertical actually opens that kind of result.
+- Six AI assistants, each modeled honestly: some run your query the moment you land, some drop it into the composer for you to send, and for the ones that ignore URL input entirely, an optional prompt bridge types your query in for you (with a separate opt-in for auto-send).
+- Fourteen major retailers for direct product search — from general marketplaces to specialty shops — and the ability to add any store you want with a simple search template.
+
+MAKE IT YOURS
+
+- Hide any engine, assistant, or store you don't use, and add your own to any category — your custom sources behave exactly like the built-in ones.
+- Two-axis filters you can combine freely: a vertical (All / News / Images / Video) plus refiners (Reddit, Academic, PDF, Exact phrase, Recent), and an AI-free toggle that strips AI-generated answer boxes on engines that inject them.
+- Bang shortcuts: start a query with a short "!" token to retarget that one search — a different engine, a chat, a store, or a site — without touching any saved setting.
+- Five themes, each with a subtle animated background (a slow-drifting ambient gradient, no heavy GPU effects), plus a custom theme with your own colors. Upload your own image and Horizon auto-dims or brightens it just enough to keep the text readable, with blur, dim, and text-color controls.
+- A quick-links row for the sites you open most, and a cached local weather forecast that stays fast and works without an account.
+
+AI SIGNAL (BETA)
+
+An optional, fully on-device heuristic that scores search results for AI-generated writing. It reads only the title and snippet already on the page — never fetching article bodies — and it's honest about being an estimate, not a verdict. Off by default; the optional page detector asks for permission before it runs anywhere.
+
+PRIVATE BY DESIGN
+
+Local-first: your settings live in your browser, the analysis happens on your device, and there is no server, no analytics, and no tracking. Open source (MIT) — bug reports and contributions are welcome.

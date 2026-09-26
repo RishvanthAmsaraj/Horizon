@@ -1,0 +1,154 @@
+CHROME WEB STORE SUBMISSION — HORIZON TAB 1.15.0 (store build)
+================================================================
+Zip to upload: ~/Downloads/Horizon/horizon-tab-store-1.15.0.zip
+Screenshots:   ~/Downloads/Horizon/store/screenshots-new/  (3 files, 1280x800 PNG)
+Icon:          icons/icon-128.png inside the zip (or ~/Downloads/Horizon/horizon-icon-512.png
+               if the form asks for a larger one)
+
+Everything below is copy-paste ready. Where the form asks for something not
+listed (language, regions, visibility), leave the defaults: English, all
+regions, public.
+
+
+----------------------------------------------------------------
+1. NAME
+----------------------------------------------------------------
+Horizon Tab
+
+
+----------------------------------------------------------------
+2. SHORT DESCRIPTION  (the tile/badge text, 132 characters max)
+----------------------------------------------------------------
+A minimal, customizable new tab page: clock, weather, quick links, and
+one-click shortcuts to AI chats and stores.
+
+
+----------------------------------------------------------------
+3. DETAILED DESCRIPTION
+----------------------------------------------------------------
+Horizon Tab turns Chrome's default new tab into a calm, personal dashboard.
+It loads instantly, asks for almost nothing, and stays out of your way.
+
+What you get
+
+* A live clock with a greeting and today's date.
+
+* Local weather for your area, with condition icons, a description, and
+  today's high and low. Data comes from the US National Weather Service.
+  You can set custom coordinates in settings or leave the default.
+
+* A search box that uses YOUR default search engine. Horizon never changes
+  your search provider and never sends your query anywhere else. Type a
+  URL and it navigates instead of searching.
+
+* A shortcut drawer with three sections (Web Search, AI Chat, and Shop).
+  Every tile is a plain link that opens that site in a new tab: eight search
+  engines, six AI chats, and fourteen retailers are ready out of the box.
+
+* Quick links for the sites you actually open, with editable icons.
+
+* Five themes, including a custom two-color theme and a day/night adaptive
+  one; your own background image with automatic dim and blur; adjustable
+  glass intensity; and a global text color override.
+
+Keyboard friendly: press / or Cmd+K to jump to the search box, ? to open
+settings, and Esc to close.
+
+Privacy
+
+* No accounts, no sign-in, no analytics, no ads, no tracking.
+* Settings stay in your browser profile and sync through your own Chrome Sync.
+* The only network requests are the weather lookup and the favicon service
+  used for quick-link icons. Searches are ordinary navigations to the engine
+  you already chose in Chrome.
+
+Horizon is open source. The code is on GitHub, and it asks for just two
+permissions: storage and search.
+
+
+----------------------------------------------------------------
+4. SINGLE PURPOSE  (one sentence — keep it this narrow)
+----------------------------------------------------------------
+A customizable new tab page.
+
+
+----------------------------------------------------------------
+5. CATEGORY
+----------------------------------------------------------------
+Productivity
+(Tools is an acceptable alternate if you prefer.)
+
+
+----------------------------------------------------------------
+6. PERMISSION JUSTIFICATIONS
+----------------------------------------------------------------
+Paste each one into the matching field on the Privacy practices tab.
+
+storage
+  Saves your preferences (theme, background image, quick links, weather
+  coordinates, drawer state) locally and syncs them through Chrome Sync so
+  they follow your profile. This data never leaves the browser and is never
+  sent to the developer.
+
+search
+  Lets the search box run your query through your browser's own default
+  search engine using the Chrome Search API. This is what guarantees the
+  extension never changes, replaces, or overrides your search provider.
+
+
+----------------------------------------------------------------
+7. REMOTE CODE
+----------------------------------------------------------------
+No. All code is bundled in the package. There are no remote scripts, no
+eval or new Function, and nothing is fetched and executed at runtime.
+
+
+----------------------------------------------------------------
+8. PRIVACY PRACTICES TAB (data usage form)
+----------------------------------------------------------------
+* Single purpose: A customizable new tab page.
+
+* "Does this extension collect user data?" -> No.
+  Answer "No" / "Not collected" for every data category the form lists
+  (personally identifiable info, health, financial, authentication,
+  personal communications, location, web history, user activity, website
+  content).
+
+* Remote code: No.
+
+* Certification checkboxes (because nothing is collected): tick the boxes
+  confirming you do not sell or transfer user data, do not use it for
+  purposes unrelated to the single purpose, and do not use it to determine
+  creditworthiness or for lending.
+
+* Privacy policy URL (if the form requires one):
+  https://github.com/RishvanthAmsaraj/Horizon/blob/main/horizon-tab-store/PRIVACY.md
+
+* Local-processing notes, if the form gives you a free-text box:
+     - Settings: stored locally and synced via Chrome Sync.
+     - Weather coordinates: sent to api.weather.gov to fetch the forecast.
+     - Quick-link domains: sent to Google's favicon service to fetch icons.
+     - Searches: normal navigations, sent only to the engine you chose.
+
+
+----------------------------------------------------------------
+9. STORE LISTING ASSETS
+----------------------------------------------------------------
+* Screenshots (1280x800 PNG, mandatory, at least one):
+    HorizonTab-1-home.png             new tab page, drawer closed
+    HorizonTab-2-ai-chat-drawer.png   shortcut drawer, AI Chat section open
+    HorizonTab-3-settings.png         settings panel
+* Store icon: icons/icon-128.png (already inside the zip).
+* Promo tiles (optional): skip unless the dashboard forces them.
+
+
+----------------------------------------------------------------
+10. IF A REVIEWER ASKS ABOUT THE OLD VIOLATION
+----------------------------------------------------------------
+Say this: the earlier submission bundled a multi-engine search switcher
+into the new tab page, which the single purpose policy flags. This build
+removes that entirely. Search now runs through the Chrome Search API on
+the user's own default engine, the drawer contains only plain links that
+open in a new tab, and there are no bangs, filters, custom search sources,
+or content scripts. The two remaining permissions are storage and search,
+and there is no remote code.

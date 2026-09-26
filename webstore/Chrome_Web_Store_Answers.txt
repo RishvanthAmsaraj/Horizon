@@ -1,0 +1,152 @@
+CHROME WEB STORE — SUBMISSION ANSWERS
+========================================
+Two separate extensions. Fill out the Developer Dashboard once per extension
+(console.chrome.google.com > Developer Dashboard > Add a new item > upload the zip).
+
+Every answer below is copy-paste ready. Where the form asks for something not
+listed here (language, regions), leave the default (English / All regions).
+
+
+################################################################
+EXTENSION 1 — HORIZON TAB  (zip: HorizonTab-1.15.0.zip)
+################################################################
+
+NAME
+  Horizon Tab
+
+SHORT DESCRIPTION  (this is the 132-character badge/tile text)
+  A minimal, beautiful, customizable new tab page — clock, weather, and a unified search drawer.
+
+DETAILED DESCRIPTION
+  Horizon Tab replaces Chrome's default new tab with a fast, private, local-first
+  dashboard. It shows a clock, greeting, and local weather, plus a unified search
+  drawer that searches 8 web engines, chats 6 AI providers, and shops 14 stores —
+  all from one box. Curate every source, hide what you don't use, and add your own
+  with a %s template. Bangs retarget a single search, and two-axis filters
+  (verticals x refiners) refine it.
+
+  The optional Prompt Bridge fills your query into Gemini and DeepSeek, which
+  ignore prefilled links.
+
+  No accounts, no analytics, no tracking. Settings sync through your own Chrome
+  Sync. The only network calls are the ones you trigger (a search) or opt into
+  (weather, prompt bridge).
+
+SINGLE PURPOSE
+  A customizable new tab page with a unified search drawer.
+
+CATEGORY
+  Productivity
+
+PERMISSION JUSTIFICATIONS  (paste each into the corresponding permission field)
+  storage
+    Save and sync your settings (theme, quick links, search sources, background
+    image) via Chrome's storage API. No data leaves the browser.
+
+  scripting
+    Register the optional Prompt Bridge content script only when you turn it on.
+    Nothing is injected otherwise.
+
+  Optional host permission: https://gemini.google.com/* and https://chat.deepseek.com/*
+    The Prompt Bridge types your query into the chat box on Gemini and DeepSeek,
+    which ignore prefilled URLs. Requested only when you enable the bridge.
+
+REMOTE CODE
+  No. All code is bundled with the extension; nothing is fetched or executed remotely.
+
+PRIVACY PRACTICES (Data safety form)
+  - Single purpose: A customizable new tab page.
+  - "Does the extension collect user data?" -> No. (All processing is local.)
+  - Data collected / transmitted: none to the developer.
+  - Local processing notes (if the form asks):
+      * Settings — stored locally / synced via Chrome Sync.
+      * Weather coordinates — sent to api.weather.gov to fetch the forecast.
+      * Quick-link domains — sent to google.com/s2/favicons to fetch icons.
+      * Search / AI / store queries — normal navigations you initiate, sent only
+        to the site you chose.
+
+
+################################################################
+EXTENSION 2 — HORIZON AI SIGNAL  (zip: AISignal-1.0.0.zip)
+################################################################
+
+NAME
+  Horizon AI Signal
+
+SHORT DESCRIPTION  (132-character badge/tile text)
+  Detect AI-generated text on search results and web pages — private, on-device.
+
+DETAILED DESCRIPTION
+  AI Signal is a heuristic "smell test" for AI-written text. On Google, DuckDuckGo,
+  and Brave it shows a badge on each search result with an estimated AI score, and
+  can auto-hide high-scoring results. An optional Page Detector adds a floating
+  score to article pages you visit.
+
+  Every analysis runs entirely on your device on the title and snippet already
+  shown on the page. No page content is uploaded anywhere.
+
+  AI Signal is honest about its limits: it is a statistical estimate, not a
+  definitive detector, and can produce false positives and false negatives.
+
+SINGLE PURPOSE
+  Detects AI-generated text on search results and web pages.
+
+CATEGORY
+  Productivity
+
+PERMISSION JUSTIFICATIONS
+  storage
+    Save your settings (sensitivity, auto-hide threshold, dismissed domains)
+    locally and sync them via Chrome Sync.
+
+  scripting
+    Register the optional Page Detector script only when you enable it.
+    Unregistered otherwise.
+
+  Optional host permission: <all_urls>
+    Needed for the optional Page Detector, which shows a floating score on article
+    pages. Requested only when you turn that feature on.
+
+  Host permission: *://safebrowsing.googleapis.com/*
+    Used only if you add your own Google Safe Browsing API key to check pages
+    against Google's threat list. No request is made without your key.
+
+  Content scripts on google.com/search, duckduckgo.com, search.brave.com
+    The core feature: scoring search results on these three engines.
+
+REMOTE CODE
+  No. All code is bundled with the extension; nothing is fetched or executed remotely.
+
+PRIVACY PRACTICES (Data safety form)
+  - Single purpose: Detects AI-generated text on search results and web pages.
+  - "Does the extension collect user data?" -> No.
+  - Local processing notes:
+      * Settings and dismissed domains — stored locally / synced via Chrome Sync.
+      * Search-result titles and snippets — read on-device only; never uploaded.
+      * Hostname — sent to safebrowsing.googleapis.com ONLY if you add your own
+        API key (optional feature).
+
+
+################################################################
+NOTES BEFORE YOU SUBMIT (both extensions)
+################################################################
+
+1. SCREENSHOTS — the store asks for at least one screenshot per extension
+   (1280x800 or 640x400). Capture:
+     - Horizon Tab: the new tab page itself.
+     - AI Signal: a Google search results page with the badges visible.
+
+2. STORE ICON (128x128) — already included in each zip (icons/icon-128.png).
+   The form may ask you to upload it separately; use the same PNG.
+
+3. REMOTE CODE question — answer "No" for both. There is no remotely-hosted code.
+
+4. If a reviewer asks why Horizon Tab's Prompt Bridge touches Gemini/DeepSeek:
+   it only fills the chat box with the user's own query on sites they explicitly
+   grant, and reads only the query it just sent — never conversation content.
+
+5. Both extensions were split from a single rejected submission whose violation
+   was "changes to both the new tab page and the search experience." They are now
+   two single-purpose extensions, which is exactly what the policy requires.
+
+6. Version numbers: Horizon Tab 1.15.0, Horizon AI Signal 1.0.0.

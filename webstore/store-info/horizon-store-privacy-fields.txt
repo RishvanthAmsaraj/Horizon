@@ -1,0 +1,50 @@
+CHROME WEB STORE — PRIVACY PRACTICES TAB (copy-paste text)
+===========================================================
+
+Each field below maps to a box on the "Privacy practices" tab of the item
+edit page. Copy the text under each heading into the matching field.
+
+
+1. SINGLE PURPOSE (required)
+---------------------------
+Horizon Tab replaces the new tab page with a customizable, private dashboard for web search, AI chat, and product search from a single box.
+
+
+2. STORAGE permission justification
+-----------------------------------
+Horizon stores the user's settings (theme, quick links, custom search sources, background image, and AI Signal preferences) locally through chrome.storage so they persist and can sync between the user's own devices. Nothing is sent to a server.
+
+
+3. SCRIPTING permission justification
+-------------------------------------
+Horizon uses scripting to register and unregister two optional content scripts at runtime — the AI Signal page detector and the AI prompt bridge. They are injected only when the user enables those features and grants the matching host permission; otherwise nothing is injected.
+
+
+4. HOST PERMISSION justification
+--------------------------------
+- safebrowsing.googleapis.com — Optional Safe Browsing check. Horizon sends a page's hostname to Google Safe Browsing only if the user has added their own API key; with no key configured, no request is ever made.
+- <all_urls> (optional) — Optional "page detector." Requested only when the user turns it on, to score article text for AI-generated writing. All analysis runs on-device; no page content is uploaded.
+- Individual AI sites (optional) — Optional "prompt bridge." Requested only when the user enables it, to type the user's own search query into the chat composer on the AI site they navigated to.
+
+
+5. REMOTE CODE justification
+----------------------------
+Horizon does not use remote code. All JavaScript is bundled with the extension and executed locally; no code is fetched, loaded, or evaluated from a remote source. The only network requests are user-initiated searches, the National Weather Service forecast API, and an optional Google Safe Browsing lookup using the user's own API key.
+
+
+6. DATA USAGE — what to declare (the checkboxes you certify)
+------------------------------------------------------------
+For each data type the form lists, declare "No" (Horizon does not collect it).
+The honest summary to keep in mind while filling it out:
+
+  - Horizon collects no personal data and transmits nothing to the developer.
+  - Data stored locally/synced: user preferences (chrome.storage) — not "collected" by the developer.
+  - Network calls the extension makes on the user's behalf: weather (api.weather.gov), quick-link favicons (Google), optional Safe Browsing (user's own key), and the searches the user initiates.
+  - Then check the box certifying compliance with Developer Program Policies.
+
+
+ITEMS YOU MUST DO YOURSELF (these are account actions, not text fields)
+=======================================================================
+1. Contact email — Chrome Web Store dashboard → Settings → "Publisher" section → enter your contact email.
+2. Verify email — after entering it, click the verification link Google emails you.
+3. Save Draft — after filling the privacy tab and certifying, click "Save Draft" (top-right of the item edit page).
