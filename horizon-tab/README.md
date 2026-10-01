@@ -15,8 +15,11 @@ Horizon replaces Chrome's default new tab with a fast, private dashboard — a c
 - **Bangs** — start a query with `!yt`, `!a`, `!w`, `!gpt`, `!news` and more to retarget that single search without touching any setting.
 - **Themes** — Slate, Ivory, Navy, Modern (auto day/night), and a fully custom color theme.
 - **Custom background** — upload any image; auto-contrast dimming and optional blur keep the text legible.
+- **Readability controls** — contrast modes (auto / boosted / maximum), a text outline for busy photos, and a backdrop scrim behind the clock and search box, all without changing your theme.
+- **Interface scale** — resize the whole UI from 80% to 150% in settings.
+- **Firefox ready** — the full build loads in Firefox too (see install notes below); weather, storage, and the prompt bridge work on both engines.
 - **Quick links** — your own row of shortcuts, editable inline.
-- **Weather** — local forecast from the National Weather Service (US), cached so ten tabs cost one request.
+- **Weather** — worldwide forecast from Open-Meteo (no API key), cached so ten tabs cost one request. Search any city in settings, or enter coordinates manually; units follow your locale (°F/°C) or lock to one.
 - **AI Signal (beta)** — a fully client-side "smell test" that scores search results for AI-flavored writing. No pages are fetched; nothing leaves your device. Optional page detector + Safe Browsing check (bring your own API key).
 
 ## Privacy
@@ -30,6 +33,8 @@ Horizon is local-first. There are no accounts, no analytics, and no tracking. Yo
 3. Enable **Developer mode** (top right).
 4. Click **Load unpacked** and select this folder.
 5. Open a new tab.
+
+**Firefox:** open `about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on**, and select `manifest.json` inside this folder.
 
 ## Permissions
 

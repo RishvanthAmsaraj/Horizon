@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Horizon Tab",
-  "version": "1.14.0",
+  "version": "1.15.0",
   "description": "A minimal, beautiful, customizable new tab page \u2014 your horizon, your way.",
   "chrome_url_overrides": {
     "newtab": "tab.html"
@@ -23,7 +23,10 @@
     "*://safebrowsing.googleapis.com/*"
   ],
   "background": {
-    "service_worker": "aiscan/background.js"
+    "service_worker": "aiscan/background.js",
+    "scripts": [
+      "aiscan/background.js"
+    ]
   },
   "content_scripts": [
     {

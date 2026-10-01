@@ -173,7 +173,7 @@ body{
 @keyframes drift-c{from{transform:translate3d(0,0,0)}to{transform:translate3d(-8vmax,-7vmax,0)}}
 
 /* ── Container */
-.container{--hero-gap:.85rem;position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;padding:2rem;width:100%;max-width:640px;animation:fadeIn .55s var(--ease-smooth) both;gap:1.5rem}
+.container{--hero-gap:.85rem;position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;padding:2rem;width:100%;max-width:40rem;animation:fadeIn .55s var(--ease-smooth) both;gap:1.5rem}
 /* Container justify shifts based on drawer state — default centered content */
 .container{justify-content:center;min-height:100dvh}
 
@@ -228,7 +228,7 @@ body{
 .mode-tag{
   flex-shrink:0;
   display:inline-flex;align-items:center;gap:.3rem;
-  max-width:160px;                   /* room for the label */
+  max-width:10rem;                   /* room for the label */
   padding:.06rem .45rem;
   margin-left:.7rem;
   border-radius:5px;
@@ -255,7 +255,7 @@ body{
   opacity:1;
   transform:translateX(0);
   transition:opacity .25s var(--ease-smooth), transform .25s var(--ease-smooth), max-width .35s var(--ease-spring);
-  max-width:140px;
+  max-width:8.75rem;
   overflow:hidden;text-overflow:ellipsis;
 }
 
@@ -284,7 +284,7 @@ body{
 
 
 /* ── Layout push for links ── */
-.links{display:flex;flex-wrap:wrap;justify-content:center;gap:.6rem;width:100%;max-width:500px;margin:0;padding:0;animation:fadeUp .6s .3s both;position:relative;z-index:1}
+.links{display:flex;flex-wrap:wrap;justify-content:center;gap:.6rem;width:100%;max-width:31.25rem;margin:0;padding:0;animation:fadeUp .6s .3s both;position:relative;z-index:1}
 
 /* ── Drawer — transparent inner strip. The parent
    .search-section.open owns the chrome (border + bg + shadow
@@ -325,7 +325,7 @@ body{
      the width and any short last row stays CENTERED under the search
      bar. Web = 8 engines (4 per row), AI = 6 chats, Shop = 14 stores. */
 .drawer-grid{display:flex;flex-wrap:wrap;justify-content:center;align-items:stretch;gap:.35rem;padding:.15rem 0}
-.drawer-grid .drawer-btn{flex:1 1 125px;max-width:calc(25% - .2625rem)}   /* web: 4 per row */
+.drawer-grid .drawer-btn{flex:1 1 7.8125rem;max-width:calc(25% - .2625rem)}   /* web: 4 per row */
 /* AI grid — flex-wrap centering so the last short row stays centered at
    ANY count (6 built-ins today, more once the user adds custom ones).
    The old nth-child centering only worked for a fixed 6 at a fixed
@@ -334,12 +334,12 @@ body{
   display:flex;flex-wrap:wrap;justify-content:center;align-items:stretch;
 }
 .drawer-grid.ai-grid .drawer-btn{
-  flex:1 1 108px;
+  flex:1 1 6.75rem;
   max-width:calc(25% - .2625rem);   /* 4 per row */
 }
 @media (max-width:520px){
   .drawer-grid.ai-grid .drawer-btn{
-    flex-basis:88px;
+    flex-basis:5.5rem;
     max-width:calc(33.333% - .2334rem);  /* 3 per row */
   }
 }
@@ -359,17 +359,17 @@ body{
   font-weight:600;
 }
 .drawer-btn .db-svg{flex-shrink:0;width:16px;height:16px;border-radius:3px;display:flex;align-items:center;justify-content:center;transition:transform .28s var(--ease-spring)}
-.drawer-btn .db-svg svg{width:14px;height:14px;display:block}
+.drawer-btn .db-svg svg{width:.875rem;height:.875rem;display:block}
 .drawer-btn:hover .db-svg{transform:scale(1.08)}
 .drawer-btn .db-name{flex:0 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .drawer-btn .db-tag{font-size:.54rem;opacity:.3;white-space:nowrap}
 
 /* ── Drawer footer (filters + hint) ── */
 .drawer-footer{padding:0;max-height:0;overflow:hidden;opacity:0;transition:max-height .35s .1s var(--ease-smooth),opacity .25s .15s var(--ease-smooth),padding .3s .1s var(--ease-smooth)}
-.search-section.open .drawer-footer{max-height:80px;padding:.15rem 0 0;opacity:1}
+.search-section.open .drawer-footer{max-height:5rem;padding:.15rem 0 0;opacity:1}
 
 .filter-bar{display:flex;justify-content:center;gap:.3rem;flex-wrap:wrap;padding:0;max-height:0;overflow:hidden;opacity:0;transition:max-height .3s .18s var(--ease-smooth),padding .25s .18s var(--ease-smooth),opacity .25s .22s var(--ease-smooth)}
-.filter-bar.visible{max-height:88px;padding:.1rem 0 0;opacity:1}
+.filter-bar.visible{max-height:5.5rem;padding:.1rem 0 0;opacity:1}
 .filter-chip{
   display:flex;align-items:center;gap:.25rem;padding:.2rem .55rem;
   border-radius:100px;border:1px solid var(--border);background:var(--surface);
@@ -391,7 +391,7 @@ body{
 .filter-chip.aifree:hover:not(.active){color:#22c55e;border-color:#22c55e}
 
 .ai-hint{font-size:.6rem;color:var(--text-muted);text-align:center;margin:0;padding:0;max-height:0;overflow:hidden;opacity:0;transition:max-height .25s .2s var(--ease-smooth),padding .2s .2s var(--ease-smooth),opacity .2s .22s var(--ease-smooth)}
-.search-section.open .ai-hint.active{max-height:30px;padding:.2rem 0 0;opacity:1}
+.search-section.open .ai-hint.active{max-height:1.875rem;padding:.2rem 0 0;opacity:1}
 
 
 .link-item{display:flex;flex-direction:column;align-items:center;gap:.3rem;text-decoration:none;color:var(--text-dim);font-size:.7rem;padding:.6rem .85rem;border-radius:var(--rs);background:var(--surface);border:1px solid transparent;min-width:68px;transition:background-color .25s var(--ease-smooth),border-color .35s var(--ease-smooth),color .25s var(--ease-smooth),transform .35s var(--ease-spring),box-shadow .35s var(--ease-smooth)}
@@ -401,7 +401,7 @@ body{
 .link-icon::after{content:'';position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);pointer-events:none}
 .link-icon img{width:100%;height:100%;object-fit:cover;border-radius:4px}
 .link-item:hover .link-icon{transform:scale(1.1)}
-.link-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:68px;font-weight:500}
+.link-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:4.25rem;font-weight:500}
 
 /* ── Settings toggle */
 .settings-toggle{position:fixed;bottom:24px;right:24px;width:40px;height:40px;z-index:10;border-radius:50%;border:1px solid var(--border);background:var(--surface);backdrop-filter:blur(var(--blur,24px));-webkit-backdrop-filter:blur(var(--blur,24px));color:var(--text-dim);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background-color .3s var(--ease-smooth),border-color .3s var(--ease-smooth),color .3s var(--ease-smooth),transform .4s var(--ease-spring),box-shadow .3s var(--ease-smooth);animation:fadeUp .6s .35s both}
@@ -411,7 +411,7 @@ body{
 /* ── Settings panel */
 .settings-backdrop{position:fixed;inset:0;z-index:98;background:rgba(0,0,0,0.45);opacity:0;pointer-events:none;transition:opacity .35s var(--ease-smooth)}
 .settings-backdrop.open{opacity:1;pointer-events:all;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-.settings-panel{position:fixed;top:0;right:0;width:400px;max-width:90vw;height:100%;background:var(--bg2);border-left:1px solid var(--border-strong);z-index:99;overflow-y:auto;
+.settings-panel{position:fixed;top:0;right:0;width:25rem;max-width:90vw;height:100%;background:var(--bg2);border-left:1px solid var(--border-strong);z-index:99;overflow-y:auto;
   transform:translateX(calc(100% + 24px));will-change:transform;visibility:hidden;contain:layout paint;
   transition:transform .55s var(--ease-spring),visibility 0s .55s}
 .settings-panel.open{transform:translateX(0);visibility:visible;transition:transform .55s var(--ease-spring),visibility 0s}
@@ -470,7 +470,7 @@ body{
   .weather{font-size:.72rem;padding:.3rem .75rem}
   .container{padding:1.25rem}
   .theme-grid{grid-template-columns:1fr}
-  .drawer-grid{grid-template-columns:repeat(auto-fill,minmax(90px,1fr))}
+  .drawer-grid{grid-template-columns:repeat(auto-fill,minmax(5.625rem,1fr))}
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -490,7 +490,7 @@ body{
   background:var(--bg2);
   border:1px solid var(--border-strong);
   border-radius:var(--r);
-  width:100%;max-width:540px;max-height:80vh;overflow-y:auto;
+  width:100%;max-width:33.75rem;max-height:80vh;overflow-y:auto;
   padding:1.1rem 1.3rem 1.3rem;
   box-shadow:var(--shadow-hover);
   transform:translateY(8px) scale(.98);
@@ -588,16 +588,16 @@ body{
   display:flex;flex-wrap:wrap;justify-content:center;align-items:stretch;
 }
 .drawer-grid.shop-grid .drawer-btn{
-  flex:1 1 108px;
+  flex:1 1 6.75rem;
   max-width:calc(25% - .2625rem);   /* 4 per row (gap .35rem × 3 ÷ 4) */
 }
 @media (max-width:520px){
   .drawer-grid.shop-grid .drawer-btn{
-    flex-basis:88px;
+    flex-basis:5.5rem;
     max-width:calc(33.333% - .2334rem);  /* 3 per row */
   }
   .drawer-grid .drawer-btn{
-    flex-basis:88px;
+    flex-basis:5.5rem;
     max-width:calc(33.333% - .2334rem);  /* 3 per row (web too) */
   }
 }
@@ -668,4 +668,160 @@ html[data-theme="modern-day"] .settings-panel{
   --surface-active-rgba:rgba(255,255,255,0.12);
   --border:rgba(255,255,255,0.05);
   --border-strong:rgba(255,255,255,0.10);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   READABILITY & UI SCALE (v1.15)
+   ══════════════════════════════════════════════════════════════
+   Light background images were the worst case: the light themes set
+   --surface-opacity to 0.02 and borders to 5% black, so over a bright
+   photo the buttons and chips were effectively invisible and muted
+   text sat at #909090 on near-white. These controls raise the floor. */
+
+/* UI scale — layout is rem-based, so scaling the root font size scales
+   the whole interface. Hairline borders and shadows stay in px on
+   purpose: a 1px rule should remain 1px at any zoom. */
+html{font-size:calc(16px * var(--ui-scale,1))}
+
+/* Halo colour: must CONTRAST with the text, so dark-on-light gets a
+   white halo and light-on-dark gets a black one. Note: the ivory and
+   modern-day presets use WHITE text by design (unlike lightbg), so
+   they start on the dark halo — a contrast mode that switches them to
+   dark ink flips the halo and scrim along with the text. */
+html{--halo-c:rgba(0,0,0,.72)}
+html[data-theme="lightbg"]{--halo-c:rgba(255,255,255,.88)}
+html[data-contrast="boost"][data-theme="ivory"],
+html[data-contrast="boost"][data-theme="modern-day"],
+html[data-contrast="max"][data-theme="ivory"],
+html[data-contrast="max"][data-theme="modern-day"]{--halo-c:rgba(255,255,255,.88)}
+html{--scrim-c:0,0,0}
+html[data-theme="lightbg"]{--scrim-c:255,255,255}
+html[data-contrast="boost"][data-theme="ivory"],
+html[data-contrast="boost"][data-theme="modern-day"],
+html[data-contrast="max"][data-theme="ivory"],
+html[data-contrast="max"][data-theme="modern-day"]{--scrim-c:255,255,255}
+
+/* ── Text halo — the single most effective fix for text over photos ── */
+html[data-halo="1"] .hero .greeting,
+html[data-halo="1"] .hero .time,
+html[data-halo="1"] .hero .date,
+html[data-halo="1"] .weather,
+html[data-halo="1"] .link-label,
+html[data-halo="1"] .link-icon,
+html[data-halo="1"] .mode-tag,
+html[data-halo="1"] #searchInput,
+html[data-halo="1"] #searchInput::placeholder{
+  text-shadow:0 1px 2px var(--halo-c),0 0 .5rem var(--halo-c);
+}
+
+/* ── Scrim — soft panel behind the content column ── */
+.container::before{
+  content:"";position:absolute;z-index:-1;
+  inset:-2.5rem -2rem;
+  pointer-events:none;
+  opacity:var(--scrim,0);
+  background:radial-gradient(ellipse at 50% 45%,
+    rgba(var(--scrim-c),.78) 0%,
+    rgba(var(--scrim-c),.62) 45%,
+    rgba(var(--scrim-c),.28) 70%,
+    transparent 85%);
+  transition:opacity .35s var(--ease-smooth);
+}
+
+/* ── Contrast levels ──────────────────────────────────────────
+   Appended after the theme blocks so equal-specificity rules win.
+   Split by theme family because the ink colour differs. */
+
+/* Dark-ink families (light text on dark) */
+html[data-contrast="boost"]:not([data-theme]),
+html[data-contrast="boost"][data-theme="slate"],
+html[data-contrast="boost"][data-theme="navy"],
+html[data-contrast="boost"][data-theme="modern"],
+html[data-contrast="boost"][data-theme="custom"],
+html[data-contrast="boost"][data-theme="darkbg"]{
+  /* surface opacity is computed in JS — see surfaceOpacity() */
+  --surface-hover-rgba:rgba(255,255,255,.20);
+  --surface-active-rgba:rgba(255,255,255,.26);
+  --border:rgba(255,255,255,.20);--border-strong:rgba(255,255,255,.34);
+  --text-dim:#c3cad1;--text-muted:#9aa3ab;
+}
+html[data-contrast="max"]:not([data-theme]),
+html[data-contrast="max"][data-theme="slate"],
+html[data-contrast="max"][data-theme="navy"],
+html[data-contrast="max"][data-theme="modern"],
+html[data-contrast="max"][data-theme="custom"],
+html[data-contrast="max"][data-theme="darkbg"]{
+  /* surface opacity is computed in JS — see surfaceOpacity() */
+  --surface-hover-rgba:rgba(255,255,255,.34);
+  --surface-active-rgba:rgba(255,255,255,.42);
+  --border:rgba(255,255,255,.42);--border-strong:rgba(255,255,255,.60);
+  --text:#FFFFFF;--text-dim:#E2E7EB;--text-muted:#BFC7CE;
+  --hero-text:#FFFFFF;--hero-sub:#E6EAEE;
+}
+
+/* Light-ink families (dark text on light).
+   Unlike the upstream block, boost also overrides the ink colours here:
+   ivory and modern-day default to WHITE text, so boost must switch
+   them to dark ink for the floor to mean anything. */
+html[data-contrast="boost"][data-theme="ivory"],
+html[data-contrast="boost"][data-theme="lightbg"],
+html[data-contrast="boost"][data-theme="modern-day"]{
+  /* surface opacity is computed in JS — see surfaceOpacity() */
+  --surface-hover-rgba:rgba(0,0,0,.14);
+  --surface-active-rgba:rgba(0,0,0,.20);
+  --border:rgba(0,0,0,.22);--border-strong:rgba(0,0,0,.36);
+  --text:#2c2c2c;--text-dim:#4a4a4a;--text-muted:#6b6b6b;
+  --hero-text:#2c2c2c;--hero-sub:#4a4a4a;
+}
+html[data-contrast="max"][data-theme="ivory"],
+html[data-contrast="max"][data-theme="lightbg"],
+html[data-contrast="max"][data-theme="modern-day"]{
+  /* surface opacity is computed in JS — see surfaceOpacity() */
+  --surface-hover-rgba:rgba(0,0,0,.26);
+  --surface-active-rgba:rgba(0,0,0,.34);
+  --border:rgba(0,0,0,.42);--border-strong:rgba(0,0,0,.62);
+  --text:#000000;--text-dim:#222222;--text-muted:#3d3d3d;
+  --hero-text:#000000;--hero-sub:#1c1c1c;
+}
+
+/* Max contrast also thickens the hairlines and drops translucency on
+   the drawer, which is where faint 1px borders hurt most. */
+html[data-contrast="max"] .drawer-btn,
+html[data-contrast="max"] .filter-chip,
+html[data-contrast="max"] .link-item,
+html[data-contrast="max"] .drawer-tab{border-width:2px}
+html[data-contrast="max"] .filter-chip.unsupported{opacity:.55}
+
+/* Settings: segmented control + geocode results */
+.seg-row{display:flex;gap:.3rem}
+.seg-btn{flex:1;padding:.35rem .5rem;border-radius:var(--rs);border:1px solid var(--border);
+  background:var(--surface);color:var(--text-muted);font-size:.7rem;font-family:inherit;cursor:pointer;
+  transition:background-color .2s var(--ease-smooth),border-color .2s var(--ease-smooth),color .2s var(--ease-smooth)}
+.seg-btn:hover{color:var(--text);border-color:var(--border-strong)}
+.seg-btn.active{color:var(--accent);border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--surface));font-weight:500}
+.geo-results{display:flex;flex-direction:column;gap:.2rem;margin-top:.35rem}
+.geo-results:empty{display:none}
+.geo-hit{text-align:left;padding:.35rem .5rem;border-radius:var(--rs);border:1px solid var(--border);
+  background:var(--surface);color:var(--text);font-size:.72rem;font-family:inherit;cursor:pointer;
+  transition:background-color .2s var(--ease-smooth),border-color .2s var(--ease-smooth)}
+.geo-hit:hover{border-color:var(--accent);background:var(--surface-hover-rgba)}
+.geo-msg{font-size:.68rem;color:var(--text-muted);padding:.25rem .1rem}
+.adv-details{margin-top:.45rem}
+.adv-details summary{font-size:.66rem;color:var(--text-muted);cursor:pointer;list-style:none}
+.adv-details summary::-webkit-details-marker{display:none}
+.adv-details summary::before{content:"▸ ";transition:none}
+.adv-details[open] summary::before{content:"▾ "}
+.adv-details summary:hover{color:var(--text)}
+
+/* ── Firefox fallback for the hero rhythm ──
+   The equidistant hero spacing relies on `text-box: trim-both cap
+   alphabetic` to strip the 5rem clock's font leading so the measured
+   gap equals the visual gap. That property is Chromium-only, so on
+   Firefox the clock keeps its half-leading and the greeting/date gaps
+   look larger than the rest. Approximate the trim with negative
+   margins sized for the system sans stack (cap height ≈ .72em,
+   descender ≈ .21em) — only applied where the real property is
+   unsupported, so Chromium is untouched. */
+@supports not (text-box: trim-both cap alphabetic){
+  .hero .time{margin-top:-0.10em;margin-bottom:-0.14em}
 }

@@ -4,7 +4,7 @@ A minimal, beautiful, customizable new tab page — and a private, on-device AI-
 
 ## Download
 
-**Want the full version? [Download the zip](https://github.com/RishvanthAmsaraj/Horizon/releases/download/v1.14.0/horizon-tab-full-1.14.0.zip).**
+**Want the full version? [Download the zip](https://github.com/RishvanthAmsaraj/Horizon/releases/download/v1.15.0/horizon-tab-full-1.15.0.zip).**
 
 Unzip it, open `chrome://extensions` in Chrome, turn on **Developer mode**, click **Load unpacked**, and select the unzipped folder. That's the whole install.
 
@@ -31,7 +31,7 @@ This is the real product — everything the store builds can't ship together:
 
 - **Search drawer** — one box, three tabs: web search (8 engines), AI chat (6 providers), store search (14 retailers). Bangs, filters, refiners, AI-Free mode.
 - **AI Signal** — an optional, fully on-device heuristic that flags AI-flavored writing on search results (Google, DuckDuckGo, Brave) and article pages.
-- **Dashboard** — clock, greeting, weather (National Weather Service), quick links, custom background, five themes, glass intensity, text-color override.
+- **Dashboard** — clock, greeting, worldwide weather (Open-Meteo, city search), quick links, custom background, five themes, glass intensity, text-color override, readability controls (contrast, text outline, backdrop), and UI scale (80–150%).
 - **Prompt bridge** — optional auto-fill for AI chats that ignore prefilled links (Gemini, DeepSeek).
 
 ### Install (from the zip)
@@ -62,7 +62,7 @@ The full build here keeps both together, which is perfectly fine outside the sto
 
 ## Privacy
 
-Local-first. No accounts, no analytics, no tracking. Settings stay in your browser profile; weather comes from `api.weather.gov`; AI Signal analyzes text on-device and uploads nothing. See `PRIVACY.md` in each build folder.
+Local-first. No accounts, no analytics, no tracking. Settings stay in your browser profile; weather comes from `api.open-meteo.com` (worldwide, no API key); AI Signal analyzes text on-device and uploads nothing. See `PRIVACY.md` in each build folder.
 
 ## Contributing
 

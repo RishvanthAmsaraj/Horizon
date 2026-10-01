@@ -31,6 +31,14 @@
         is skipped silently — no network call, no warning spam.
    ════════════════════════════════════════════════════════════════════ */
 
+/* Firefox exposes promise-based `browser.*`; Chrome exposes promise-based
+   `chrome.*` (MV3). Firefox's `chrome.*` compatibility layer is
+   callback-only, so `await XAPI.storage…` resolved to undefined there
+   and every settings read fell through to the localStorage fallback —
+   i.e. no sync at all on Firefox. Await through XAPI; keep plain
+   `chrome.*` for callback-style calls, which both browsers support. */
+const XAPI=(typeof browser!=="undefined"&&browser.runtime)?browser:chrome;
+
 /* ──────────────────────────────────────────────────────────────────
    1. Dynamic page-detector registration
    ────────────────────────────────────────────────────────────────── */
@@ -43,7 +51,7 @@ const SERP_MATCHES = [
 
 async function detectorRegistered() {
   try {
-    const scripts = await chrome.scripting.getRegisteredContentScripts({ ids: [DETECTOR_SCRIPT_ID] });
+    const scripts = await XAPI.scripting.getRegisteredContentScripts({ ids: [DETECTOR_SCRIPT_ID] });
     return !!(scripts && scripts.length);
   } catch (e) {
     return false;
@@ -52,7 +60,7 @@ async function detectorRegistered() {
 
 async function hasAllUrlsPermission() {
   try {
-    return await chrome.permissions.contains({ origins: ["<all_urls>"] });
+    return await XAPI.permissions.contains({ origins: ["<all_urls>"] });
   } catch (e) {
     return false;
   }
@@ -74,7 +82,7 @@ const BRIDGE_ORIGINS = [
 async function grantedBridgeOrigins() {
   const granted = [];
   for (const o of BRIDGE_ORIGINS) {
-    try { if (await chrome.permissions.contains({ origins: [o] })) granted.push(o); }
+    try { if (await XAPI.permissions.contains({ origins: [o] })) granted.push(o); }
     catch (e) { /* skip */ }
   }
   return granted;
@@ -85,20 +93,20 @@ async function syncBridgeRegistration() {
 
   let enabled = false;
   try {
-    const r = await chrome.storage.sync.get(["hz"]);
+    const r = await XAPI.storage.sync.get(["hz"]);
     enabled = !!(r && r.hz && r.hz.aiBridge);
   } catch (e) { /* default off */ }
 
   const origins = enabled ? await grantedBridgeOrigins() : [];
   let existing = [];
-  try { existing = await chrome.scripting.getRegisteredContentScripts({ ids: [BRIDGE_SCRIPT_ID] }); }
+  try { existing = await XAPI.scripting.getRegisteredContentScripts({ ids: [BRIDGE_SCRIPT_ID] }); }
   catch (e) { existing = []; }
   const have = existing && existing.length ? existing[0] : null;
 
   try {
     if (!origins.length) {
       if (have) {
-        await chrome.scripting.unregisterContentScripts({ ids: [BRIDGE_SCRIPT_ID] });
+        await XAPI.scripting.unregisterContentScripts({ ids: [BRIDGE_SCRIPT_ID] });
         console.log("[Horizon] AI bridge unregistered");
       }
       return;
@@ -114,8 +122,8 @@ async function syncBridgeRegistration() {
     const same = have && have.matches && have.matches.length === origins.length &&
                  origins.every((o) => have.matches.includes(o));
     if (same) return;
-    if (have) await chrome.scripting.updateContentScripts([spec]);
-    else await chrome.scripting.registerContentScripts([spec]);
+    if (have) await XAPI.scripting.updateContentScripts([spec]);
+    else await XAPI.scripting.registerContentScripts([spec]);
     console.log("[Horizon] AI bridge registered for", origins.length, "origin(s)");
   } catch (err) {
     console.error("[Horizon] bridge registration failed:", err);
@@ -127,7 +135,7 @@ async function syncDetectorRegistration() {
 
   let enabled = false;
   try {
-    const r = await chrome.storage.sync.get(["hz"]);
+    const r = await XAPI.storage.sync.get(["hz"]);
     enabled = !!(r && r.hz && r.hz.aiPageDetector);
   } catch (e) { /* default off */ }
 
@@ -136,7 +144,7 @@ async function syncDetectorRegistration() {
 
   try {
     if (want && !have) {
-      await chrome.scripting.registerContentScripts([{
+      await XAPI.scripting.registerContentScripts([{
         id: DETECTOR_SCRIPT_ID,
         js: ["aiscan/score.js", "aiscan/detector.js"],
         css: ["aiscan/badge.css"],
@@ -147,7 +155,7 @@ async function syncDetectorRegistration() {
       }]);
       console.log("[Horizon] Page detector registered");
     } else if (!want && have) {
-      await chrome.scripting.unregisterContentScripts({ ids: [DETECTOR_SCRIPT_ID] });
+      await XAPI.scripting.unregisterContentScripts({ ids: [DETECTOR_SCRIPT_ID] });
       console.log("[Horizon] Page detector unregistered");
     }
   } catch (err) {
@@ -180,7 +188,7 @@ const SAFE_BROWSING_TTL_MS = 60 * 60 * 1000;
    Returns null if the user has not provided one. */
 async function getSafeBrowsingKey() {
   try {
-    const r = await chrome.storage.sync.get(["hz_sb_key"]);
+    const r = await XAPI.storage.sync.get(["hz_sb_key"]);
     return typeof r.hz_sb_key === "string" && r.hz_sb_key.length > 10
       ? r.hz_sb_key
       : null;
