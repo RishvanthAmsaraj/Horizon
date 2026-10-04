@@ -44,6 +44,8 @@ Horizon is local-first. There are no accounts, no analytics, and no tracking. Yo
   - `<all_urls>` — only if you enable the page detector.
   - Individual AI origins — only if you enable the prompt bridge.
 - `safebrowsing.googleapis.com` — only used if you add your own Safe Browsing API key.
+- `api.open-meteo.com` — fetch the weather forecast for your configured location.
+- `geocoding-api.open-meteo.com` — look up a city name you type into the weather settings (only when you press Search).
 
 ## Contributing
 

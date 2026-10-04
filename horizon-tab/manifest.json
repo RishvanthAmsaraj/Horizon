@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Horizon Tab",
-  "version": "1.15.0",
+  "version": "1.15.1",
   "description": "A minimal, beautiful, customizable new tab page \u2014 your horizon, your way.",
   "chrome_url_overrides": {
     "newtab": "tab.html"
@@ -20,7 +20,9 @@
     "https://www.perplexity.ai/*"
   ],
   "host_permissions": [
-    "*://safebrowsing.googleapis.com/*"
+    "*://safebrowsing.googleapis.com/*",
+    "https://api.open-meteo.com/*",
+    "https://geocoding-api.open-meteo.com/*"
   ],
   "background": {
     "service_worker": "aiscan/background.js",

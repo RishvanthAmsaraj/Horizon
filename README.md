@@ -4,7 +4,7 @@ A minimal, beautiful, customizable new tab page — and a private, on-device AI-
 
 ## Download
 
-**Want the full version? [Download the zip](https://github.com/RishvanthAmsaraj/Horizon/releases/download/v1.15.0/horizon-tab-full-1.15.0.zip).**
+**Want the full version? [Download the zip](https://github.com/RishvanthAmsaraj/Horizon/releases/download/v1.15.1/horizon-tab-full-1.15.1.zip).**
 
 Unzip it, open `chrome://extensions` in Chrome, turn on **Developer mode**, click **Load unpacked**, and select the unzipped folder. That's the whole install.
 

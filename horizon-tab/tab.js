@@ -475,7 +475,8 @@ function renderWeather(d){
 }
 /* Cached in chrome.storage.local: opening ten tabs in a row costs one
    round-trip, not ten. Stale data renders instantly, then refreshes in
-   the background. 8 s abort so a slow API never hangs the badge. */
+   the background. 8 s abort per attempt so a slow API never hangs the
+   badge; one retry absorbs a transient network blip. */
 async function fetchWeather(){
   const[lat,lon]=weatherCoords(),unit=weatherUnit();
   let cached=null;
@@ -484,27 +485,33 @@ async function fetchWeather(){
     renderWeather(cached.d);
     if(Date.now()-cached.t<WEATHER_TTL)return;
   }
-  try{
-    const ac=new AbortController();const to=setTimeout(()=>ac.abort(),8000);
-    const url=`${WX_API}?latitude=${lat}&longitude=${lon}`+
-      `&current=temperature_2m,weather_code,is_day`+
-      `&daily=temperature_2m_max,temperature_2m_min`+
-      `&timezone=auto&forecast_days=1&temperature_unit=${unit}`;
-    const j=await(await fetch(url,{signal:ac.signal})).json();
-    clearTimeout(to);
-    if(!j||!j.current)throw new Error("no data");
-    const cur=j.current,day=j.daily||{},isDay=cur.is_day===1;
-    const desc=wmoDesc(cur.weather_code);
-    const hi=Array.isArray(day.temperature_2m_max)?Math.round(day.temperature_2m_max[0]):null;
-    const lo=Array.isArray(day.temperature_2m_min)?Math.round(day.temperature_2m_min[0]):null;
-    const data={
-      icon:wi(desc,isDay),temp:`${Math.round(cur.temperature_2m)}°`,desc,
-      hilo:(hi!=null&&lo!=null)?`H ${hi}° L ${lo}°`:"",
-      place:state.weatherPlace||""
-    };
-    renderWeather(data);
-    try{const pr=XAPI.storage.local.set({[WEATHER_KEY]:{t:Date.now(),lat,lon,unit,d:data}});if(pr&&pr.catch)pr.catch(()=>{})}catch{}
-  }catch{if(!cached)$("weatherDesc").textContent="unavailable"}
+  for(let attempt=0;attempt<2;attempt++){
+    try{
+      const ac=new AbortController();const to=setTimeout(()=>ac.abort(),8000);
+      const url=`${WX_API}?latitude=${lat}&longitude=${lon}`+
+        `&current=temperature_2m,weather_code,is_day`+
+        `&daily=temperature_2m_max,temperature_2m_min`+
+        `&timezone=auto&forecast_days=1&temperature_unit=${unit}`;
+      const j=await(await fetch(url,{signal:ac.signal})).json();
+      clearTimeout(to);
+      if(!j||!j.current)throw new Error("no data");
+      const cur=j.current,day=j.daily||{},isDay=cur.is_day===1;
+      const desc=wmoDesc(cur.weather_code);
+      const hi=Array.isArray(day.temperature_2m_max)?Math.round(day.temperature_2m_max[0]):null;
+      const lo=Array.isArray(day.temperature_2m_min)?Math.round(day.temperature_2m_min[0]):null;
+      const data={
+        icon:wi(desc,isDay),temp:`${Math.round(cur.temperature_2m)}°`,desc,
+        hilo:(hi!=null&&lo!=null)?`H ${hi}° L ${lo}°`:"",
+        place:state.weatherPlace||""
+      };
+      renderWeather(data);
+      try{const pr=XAPI.storage.local.set({[WEATHER_KEY]:{t:Date.now(),lat,lon,unit,d:data}});if(pr&&pr.catch)pr.catch(()=>{})}catch{}
+      return;
+    }catch(err){
+      if(attempt===0){await new Promise(r=>setTimeout(r,1200));continue}
+      if(!cached)$("weatherDesc").textContent="unavailable";
+    }
+  }
 }
 /* Stroke-style SVG condition icons (feather-like, currentColor) —
    consistent with the rest of the UI; no emoji. */
