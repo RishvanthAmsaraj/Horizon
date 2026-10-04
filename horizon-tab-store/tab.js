@@ -90,6 +90,7 @@ const DS={
   theme:"slate",mode:"web",links:DL,showLinks:true,glassOpacity:0.04,
   customBg:"#0d0d0d",customAccent:"#7a8a9a",customLight:false,
   weatherLat:null,weatherLon:null,
+  weatherUnit:"auto",weatherPlace:"",uiScale:1,textHalo:false,contrastMode:"auto",scrim:0,
   bgBlur:0,bgDim:null,bgDark:true,bgText:"auto",
   textColor:null
 };
@@ -115,7 +116,8 @@ function safeHref(u){
 /* ── Storage ── */
 const SYS="hz",BG_KEY="***";
 const KNOWN_KEYS=["theme","mode","links","showLinks","glassOpacity","customBg","customAccent","customLight",
-  "weatherLat","weatherLon","bgBlur","bgDim","bgDark","bgText","textColor"];
+  "weatherLat","weatherLon","weatherUnit","weatherPlace","uiScale","textHalo","contrastMode","scrim",
+  "bgBlur","bgDim","bgDark","bgText","textColor"];
 let extraState={};      // keys owned by the full build — preserved verbatim on save
 let lastSavedJSON="";
 let lastSavedBG=null;
@@ -180,38 +182,111 @@ function scheduleClock(){
   clockTimer=setTimeout(scheduleClock,Math.max(250,(60-n.getSeconds())*1000-n.getMilliseconds()));
 }
 
-/* ── Weather ── */
-const WEATHER_KEY="hzWeather2",WEATHER_TTL=10*60*1000;
+/* ══════════════════════════════════════════════════
+   WEATHER — Open-Meteo (worldwide, no API key)
+   ══════════════════════════════════════════════════
+   Replaces api.weather.gov, which only covers the United States.
+   Open-Meteo is free, keyless, CORS-enabled and global, and its
+   companion geocoding endpoint turns a typed city name into
+   coordinates so nobody has to look up their own latitude.
+   Units follow the locale by default (°F in the US, Liberia, Myanmar;
+   °C everywhere else) and can be forced either way. */
+const WEATHER_KEY="hzWeather3",WEATHER_TTL=10*60*1000;
+const GEO_API="https://geocoding-api.open-meteo.com/v1/search";
+const WX_API="https://api.open-meteo.com/v1/forecast";
+
+function prefersFahrenheit(){
+  const loc=(navigator.languages&&navigator.languages[0])||navigator.language||"en-US";
+  return /-(US|LR|MM)\b/i.test(loc)||/^en-US$/i.test(loc);
+}
+function weatherUnit(){
+  const u=state.weatherUnit;
+  if(u==="f")return "fahrenheit";
+  if(u==="c")return "celsius";
+  return prefersFahrenheit()?"fahrenheit":"celsius";
+}
+
+/* WMO weather interpretation codes → short label. Icons stay stroke-style
+   SVG via wi() — no emoji. https://open-meteo.com/en/docs */
+const WMO={
+  0:"Clear",1:"Mostly clear",2:"Partly cloudy",
+  3:"Overcast",45:"Fog",48:"Freezing fog",
+  51:"Light drizzle",53:"Drizzle",55:"Heavy drizzle",
+  56:"Freezing drizzle",57:"Freezing drizzle",
+  61:"Light rain",63:"Rain",65:"Heavy rain",
+  66:"Freezing rain",67:"Freezing rain",
+  71:"Light snow",73:"Snow",75:"Heavy snow",77:"Snow grains",
+  80:"Showers",81:"Showers",82:"Heavy showers",
+  85:"Snow showers",86:"Snow showers",
+  95:"Thunderstorm",96:"Thunderstorm",99:"Thunderstorm"
+};
+function wmoDesc(code){return WMO[code]||"—"}
+
+/* City search → coordinates. Used by the settings location field. */
+async function geocode(q){
+  const ac=new AbortController();const to=setTimeout(()=>ac.abort(),8000);
+  try{
+    const r=await fetch(`${GEO_API}?name=${encodeURIComponent(q)}&count=5&language=en&format=json`,{signal:ac.signal});
+    const j=await r.json();
+    return (j.results||[]).map(p=>({
+      name:p.name,admin:p.admin1||"",country:p.country||"",cc:p.country_code||"",
+      lat:p.latitude,lon:p.longitude
+    }));
+  }catch{return []}
+  finally{clearTimeout(to)}
+}
+
 function weatherCoords(){
   const lat=parseFloat(state.weatherLat),lon=parseFloat(state.weatherLon);
   return Number.isFinite(lat)&&Number.isFinite(lon)?[lat,lon]:[LAT,LON];
 }
 function renderWeather(d){
+  const el=$("weather");
+  if(el)el.title=d.place?`${d.place} · ${d.desc}`:d.desc;
   $("weatherIcon").innerHTML=d.icon;
   $("weatherTemp").textContent=d.temp;
   $("weatherDesc").textContent=d.desc;
   $("weatherHiLo").textContent=d.hilo;
 }
+/* Cached in chrome.storage.local: opening ten tabs in a row costs one
+   round-trip, not ten. Stale data renders instantly, then refreshes in
+   the background. 8 s abort per attempt so a slow API never hangs the
+   badge; one retry absorbs a transient network blip. */
 async function fetchWeather(){
-  const[lat,lon]=weatherCoords();
+  const[lat,lon]=weatherCoords(),unit=weatherUnit();
   let cached=null;
   try{const c=await chrome.storage.local.get([WEATHER_KEY]);cached=c[WEATHER_KEY]}catch{}
-  if(cached&&cached.lat===lat&&cached.lon===lon&&cached.d){
+  if(cached&&cached.lat===lat&&cached.lon===lon&&cached.unit===unit&&cached.d){
     renderWeather(cached.d);
     if(Date.now()-cached.t<WEATHER_TTL)return;
   }
-  try{
-    const ac=new AbortController();const to=setTimeout(()=>ac.abort(),8000);
-    const p=await(await fetch(`https://api.weather.gov/points/${lat},${lon}`,{signal:ac.signal})).json();
-    const f=await(await fetch(p.properties.forecast,{signal:ac.signal})).json(),ps=f.properties.periods;
-    clearTimeout(to);
-    const c=ps[0],nx=ps[1],t=c.temperature,d=c.isDaytime;
-    let hi=nx&&nx.isDaytime?nx.temperature:t,lo=nx&&!nx.isDaytime?nx.temperature:t;
-    if(!d){lo=t;const td=ps[2]&&ps[2].isDaytime?ps[2]:null;hi=td?td.temperature:nx?nx.temperature:t}
-    const data={icon:wi(c.shortForecast,d),temp:`${t}°`,desc:c.shortForecast,hilo:`H ${hi}° L ${lo}°`};
-    renderWeather(data);
-    try{const pr=chrome.storage.local.set({[WEATHER_KEY]:{t:Date.now(),lat,lon,d:data}});if(pr&&pr.catch)pr.catch(()=>{})}catch{}
-  }catch{if(!cached)$("weatherDesc").textContent="unavailable"}
+  for(let attempt=0;attempt<2;attempt++){
+    try{
+      const ac=new AbortController();const to=setTimeout(()=>ac.abort(),8000);
+      const url=`${WX_API}?latitude=${lat}&longitude=${lon}`+
+        `&current=temperature_2m,weather_code,is_day`+
+        `&daily=temperature_2m_max,temperature_2m_min`+
+        `&timezone=auto&forecast_days=1&temperature_unit=${unit}`;
+      const j=await(await fetch(url,{signal:ac.signal})).json();
+      clearTimeout(to);
+      if(!j||!j.current)throw new Error("no data");
+      const cur=j.current,day=j.daily||{},isDay=cur.is_day===1;
+      const desc=wmoDesc(cur.weather_code);
+      const hi=Array.isArray(day.temperature_2m_max)?Math.round(day.temperature_2m_max[0]):null;
+      const lo=Array.isArray(day.temperature_2m_min)?Math.round(day.temperature_2m_min[0]):null;
+      const data={
+        icon:wi(desc,isDay),temp:`${Math.round(cur.temperature_2m)}°`,desc,
+        hilo:(hi!=null&&lo!=null)?`H ${hi}° L ${lo}°`:"",
+        place:state.weatherPlace||""
+      };
+      renderWeather(data);
+      try{const pr=chrome.storage.local.set({[WEATHER_KEY]:{t:Date.now(),lat,lon,unit,d:data}});if(pr&&pr.catch)pr.catch(()=>{})}catch{}
+      return;
+    }catch(err){
+      if(attempt===0){await new Promise(r=>setTimeout(r,1200));continue}
+      if(!cached)$("weatherDesc").textContent="unavailable";
+    }
+  }
 }
 /* Stroke-style SVG condition icons (feather-like, currentColor) —
    consistent with the rest of the UI; no emoji. */
@@ -221,9 +296,10 @@ function wi(f,d){
   const sun=svg(`<circle cx="12" cy="12" r="5"/><path d="M12 1.5v2M12 20.5v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1.5 12h2M20.5 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>`);
   const moon=svg(`<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`);
   const cloud=svg(`<path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>`);
+  const pcloud=svg(`<circle cx="9" cy="8" r="3.5"/><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>`);
   if(F.includes("sunny")||F.includes("clear"))return d?sun:moon;
   if(F.includes("cloud")||F.includes("overcast"))return cloud;
-  if(F.includes("partly"))return d?sun:moon;
+  if(F.includes("partly"))return d?pcloud:cloud;
   if(F.includes("rain")||F.includes("shower")||F.includes("drizzle"))return svg(`<path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/><path d="M8 13v8M12 15v8M16 13v8"/>`);
   if(F.includes("thunder")||F.includes("storm"))return svg(`<path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/><path d="M13 11l-4 6h4l-1 6"/>`);
   if(F.includes("snow")||F.includes("flurr")||F.includes("blizzard"))return svg(`<path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/><path d="M8 15v7M12 13v9M16 15v7"/>`);
@@ -272,14 +348,39 @@ function applyTextColor(){
 }
 
 /* ── Glass / BG ── */
-let glassFrame=0,glassPending=null;
+let glassFrame=0;
 function applyGlassOpacity(val){
-  glassPending=parseFloat(val);state.glassOpacity=glassPending;
-  if(!glassFrame)glassFrame=requestAnimationFrame(()=>{
-    glassFrame=0;
-    document.documentElement.style.setProperty("--surface-opacity",String(glassPending));
-  });
+  state.glassOpacity=parseFloat(val);
+  if(!glassFrame)glassFrame=requestAnimationFrame(()=>{glassFrame=0;pushSurfaceOpacity()});
   saveState();
+}
+
+/* ── Readability & UI scale ──
+   Surfaces have to satisfy BOTH the glass slider and the contrast mode.
+   The slider writes --surface-opacity inline on <html>, and an inline
+   style beats any stylesheet rule — so a contrast mode that set the same
+   variable in CSS would be silently ignored. Resolve it here instead:
+   the contrast level acts as a floor the slider can exceed but not sink
+   below. */
+const SURFACE_FLOOR={auto:0,boost:0.12,max:0.24};
+function surfaceOpacity(){
+  const base=parseFloat(state.glassOpacity);
+  return Math.max(Number.isFinite(base)?base:0.04,SURFACE_FLOOR[state.contrastMode||"auto"]||0);
+}
+function pushSurfaceOpacity(){
+  document.documentElement.style.setProperty("--surface-opacity",String(surfaceOpacity()));
+}
+/* Applied as attributes/vars on <html> so every theme and the
+   background-image themes (darkbg/lightbg) inherit them. */
+function applyDisplayPrefs(){
+  const r=document.documentElement;
+  const s=Math.min(1.5,Math.max(0.8,parseFloat(state.uiScale)||1));
+  r.style.setProperty("--ui-scale",String(s));
+  r.style.setProperty("--scrim",String(Math.min(1,Math.max(0,(state.scrim||0)/100))));
+  if(state.textHalo)r.setAttribute("data-halo","1");else r.removeAttribute("data-halo");
+  const c=state.contrastMode||"auto";
+  if(c==="auto")r.removeAttribute("data-contrast");else r.setAttribute("data-contrast",c);
+  pushSurfaceOpacity();   // contrast level raises the surface floor
 }
 function analyze(img){
   const N=32,c=document.createElement("canvas");c.width=c.height=N;
@@ -507,11 +608,46 @@ function renderSettings(){
       <div class="glass-slider-row"><span>◻</span><input type="range" class="glass-slider" id="glassSlider" min="0" max="15" value="${gi}"><span>◼</span></div>
     </div>
     <div class="settings-group">
+      <label class="settings-label">Readability</label>
+      <p class="settings-hint">Light or busy background images can wash out text and buttons. These help without changing your theme.</p>
+      <label class="settings-label" style="margin-top:.5rem;font-size:.7rem;opacity:.75">Contrast</label>
+      <div class="seg-row">
+        ${[["auto","Auto"],["boost","Boosted"],["max","Maximum"]].map(([v,l])=>
+          `<button class="seg-btn${(state.contrastMode||"auto")===v?" active":""}" data-contrast="${v}">${l}</button>`).join("")}
+      </div>
+      <div class="theme-grid" style="grid-template-columns:1fr;margin-top:.45rem">
+        <button class="engine-btn${state.textHalo?" active":""}" id="haloToggle">
+          ${state.textHalo?"✓ Text outline on — readable over any image":"○ Text outline off"}
+        </button>
+      </div>
+      <div class="tune-row" style="margin-top:.5rem">
+        <label for="scrimSlider">Backdrop<span class="tune-val" id="scrimVal">${state.scrim?state.scrim+"%":"Off"}</span></label>
+        <input type="range" class="glass-slider" id="scrimSlider" min="0" max="100" step="1" value="${state.scrim||0}">
+      </div>
+      <p class="settings-hint" style="margin-top:.3rem">Backdrop fades a soft panel behind the clock and search box.</p>
+      <div class="tune-row" style="margin-top:.55rem">
+        <label for="uiScaleSlider">Interface size<span class="tune-val" id="uiScaleVal">${Math.round((state.uiScale||1)*100)}%</span></label>
+        <input type="range" class="glass-slider" id="uiScaleSlider" min="80" max="150" step="5" value="${Math.round((state.uiScale||1)*100)}">
+      </div>
+    </div>
+    <div class="settings-group">
       <label class="settings-label">Weather Location</label>
-      <p class="settings-hint">US coordinates (National Weather Service). Leave blank for the default.</p>
+      <p class="settings-hint">Search any city worldwide.${state.weatherPlace?` Currently: <strong>${esc(state.weatherPlace)}</strong>.`:""}</p>
       <div style="display:flex;gap:.4rem">
-        <input type="text" class="coord-input" id="weatherLatInput" inputmode="decimal" placeholder="Latitude" value="${state.weatherLat??""}">
-        <input type="text" class="coord-input" id="weatherLonInput" inputmode="decimal" placeholder="Longitude" value="${state.weatherLon??""}">
+        <input type="text" class="coord-input" id="weatherSearch" placeholder="City, e.g. Lisbon" autocomplete="off" spellcheck="false">
+        <button class="btn-sm" id="weatherSearchBtn" style="align-self:auto">Search</button>
+      </div>
+      <div id="weatherResults" class="geo-results"></div>
+      <details class="adv-details">
+        <summary>Enter coordinates manually</summary>
+        <div style="display:flex;gap:.4rem;margin-top:.35rem">
+          <input type="text" class="coord-input" id="weatherLatInput" inputmode="decimal" placeholder="Latitude" value="${state.weatherLat??""}">
+          <input type="text" class="coord-input" id="weatherLonInput" inputmode="decimal" placeholder="Longitude" value="${state.weatherLon??""}">
+        </div>
+      </details>
+      <label class="settings-label" style="margin-top:.6rem;font-size:.7rem;opacity:.75">Units</label>
+      <div class="seg-row">
+        ${["auto","f","c"].map(u=>`<button class="seg-btn${(state.weatherUnit||"auto")===u?" active":""}" data-unit="${u}">${u==="auto"?"Auto":u==="f"?"°F":"°C"}</button>`).join("")}
       </div>
     </div>
     <div class="settings-group">
@@ -568,16 +704,62 @@ function renderSettings(){
     if(state.bg)applyBg(state.bg,true);
     saveState();renderSettings();
   }));
+  $("settingsBody")?.querySelectorAll("[data-contrast]").forEach(b=>b.addEventListener("click",()=>{
+    state.contrastMode=b.dataset.contrast;applyDisplayPrefs();saveState();renderSettings();
+  }));
+  $("haloToggle")?.addEventListener("click",()=>{
+    state.textHalo=!state.textHalo;applyDisplayPrefs();saveState();renderSettings();
+  });
+  let dispFrame=0;
+  const scheduleDisp=()=>{if(!dispFrame)dispFrame=requestAnimationFrame(()=>{dispFrame=0;applyDisplayPrefs()})};
+  const scr=$("scrimSlider");
+  if(scr)scr.addEventListener("input",()=>{
+    state.scrim=parseInt(scr.value,10)||0;
+    $("scrimVal").textContent=state.scrim?state.scrim+"%":"Off";
+    scheduleDisp();saveState();
+  });
+  const uis=$("uiScaleSlider");
+  if(uis)uis.addEventListener("input",()=>{
+    state.uiScale=(parseInt(uis.value,10)||100)/100;
+    $("uiScaleVal").textContent=Math.round(state.uiScale*100)+"%";
+    scheduleDisp();saveState();
+  });
   const wla=$("weatherLatInput"),wlo=$("weatherLonInput");
   if(wla&&wlo){
     const upd=()=>{
       const la=parseFloat(wla.value),lo=parseFloat(wlo.value);
       state.weatherLat=Number.isFinite(la)&&Math.abs(la)<=90?la:null;
       state.weatherLon=Number.isFinite(lo)&&Math.abs(lo)<=180?lo:null;
+      state.weatherPlace="";
       saveState();fetchWeather();
     };
     wla.addEventListener("change",upd);wlo.addEventListener("change",upd);
   }
+  const wsIn=$("weatherSearch"),wsBtn=$("weatherSearchBtn"),wsOut=$("weatherResults");
+  if(wsIn&&wsBtn&&wsOut){
+    const runSearch=async()=>{
+      const q=wsIn.value.trim();
+      if(!q){wsOut.innerHTML="";return}
+      wsOut.innerHTML='<div class="geo-msg">Searching…</div>';
+      const hits=await geocode(q);
+      if(!hits.length){wsOut.innerHTML='<div class="geo-msg">No matches</div>';return}
+      wsOut.innerHTML=hits.map((h,i)=>{
+        const label=[h.name,h.admin,h.country].filter(Boolean).join(", ");
+        return `<button class="geo-hit" data-i="${i}">${esc(label)}</button>`;
+      }).join("");
+      wsOut.querySelectorAll(".geo-hit").forEach(b=>b.addEventListener("click",()=>{
+        const h=hits[parseInt(b.dataset.i,10)];
+        state.weatherLat=h.lat;state.weatherLon=h.lon;
+        state.weatherPlace=[h.name,h.admin,h.country].filter(Boolean).join(", ");
+        saveState();saveStateNow();fetchWeather();renderSettings();
+      }));
+    };
+    wsBtn.addEventListener("click",runSearch);
+    wsIn.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();runSearch()}});
+  }
+  $("settingsBody")?.querySelectorAll("[data-unit]").forEach(b=>b.addEventListener("click",()=>{
+    state.weatherUnit=b.dataset.unit;saveState();saveStateNow();fetchWeather();renderSettings();
+  }));
 }
 
 /* ── Upload ── */
@@ -703,7 +885,7 @@ document.addEventListener("keydown",e=>{
 (async function boot(){
   await loadState();
 
-  if(state.glassOpacity)document.documentElement.style.setProperty("--surface-opacity",String(state.glassOpacity));
+  applyDisplayPrefs();   // pushes the resolved surface opacity too
 
   if(state.bg)applyBg(state.bg,false);
   else applyTheme(state.theme||"slate");
